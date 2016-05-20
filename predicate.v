@@ -167,3 +167,39 @@ Theorem allb_ok : forall (p : bool -> bool), (forall b : bool, p b = true) <-> (
   apply allb_compl.
   apply allb_sound.
 Qed.
+
+Section general.
+
+Variable D : Set.
+Variables P Q : D -> Prop.
+
+Theorem AndAll : (forall x : D, P x) /\ (forall y : D, Q y) <-> forall z : D, P z /\ Q z.
+  split.
+  intros H d.
+  destruct H as [HP HQ].
+  split.
+  apply HP.
+  apply HQ.
+  intro H.
+  split.
+  intro d.
+  cut (P d /\ Q d).
+  intro pqdH.
+  destruct pqdH as [HP HQ].
+  exact HP.
+  apply H.
+  intro d.
+  cut (P d /\ Q d).
+  intro pqdH.
+  destruct pqdH as [HP HQ].
+  exact HQ.
+  apply H.
+Qed.
+  
+End general.
+
+Section deMorgan.
+
+  Variable D : Set.
+  
+End deMorgan. 

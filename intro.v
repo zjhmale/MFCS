@@ -11,6 +11,8 @@ Proof.
   exact H.                      (* current goal is just the assumption *)
 Qed.
 
+Definition I2 : P -> P := fun H : P => H. (* Curry-Howard *)
+
 Theorem K : P -> (Q -> P).
 
 Proof.

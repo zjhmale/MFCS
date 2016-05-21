@@ -201,5 +201,74 @@ End general.
 Section deMorgan.
 
   Variable D : Set.
+  Variables P Q : D -> Prop.
+  Variable R : Prop.
+
+  Theorem dm1 : (forall x : D, ~ P x) -> ~ (exists x : D, P x).
+    intros Ha He.
+    unfold not in Ha.
+    destruct He as [d pd].
+    eapply Ha.
+    apply pd.
+  Qed.
+
+  Theorem dm2 : ~ (exists x : D, P x) -> forall x : D, ~ P x. (* also say ~ (P x) *)
+    intros He d Hp.
+    apply He.
+    exists d.
+    exact Hp.
+  Qed.
+
+  Theorem dm3 : (exists x : D, ~ P x) -> ~ forall x : D, P x.
+    intros He Ha.
+    destruct He as [d pd].
+    apply pd.
+    apply Ha.
+  Qed.
+
+  Require Import Classical.
   
-End deMorgan. 
+  Theorem dm4 : ~ (forall x : D, P x) -> exists x : D, ~ (P x).
+    intro Ha.
+    apply NNPP.
+    intro He.
+    apply Ha.
+    intro d.
+    apply NNPP.
+    intro npd.
+    apply He.
+    exists d.
+    exact npd.
+  Qed.
+  
+End deMorgan.
+
+Section drinker.
+
+  Require Import Classical.
+  Variables Pubs People : Set.
+  Variables InPub : People -> Pubs -> Prop.
+  Variables Drinks : People -> Prop.
+
+  (* In every non-empty pub there is sombeody, if he (or she) drinks then everybody drinks. *)
+  Lemma drink : forall p : Pubs, (exists a : People, InPub a p) -> exists b : People, InPub b p /\ (Drinks b -> forall c : People, InPub c p -> Drinks c).
+  Abort All.
+End drinker.
+
+Section cheat.
+  
+  Variable D : Set.
+  Variables PP QQ: D -> Prop.
+  Variable R : Prop.
+
+  Lemma allMon : (forall x : D, PP x) -> (forall y : D, PP y -> QQ y) -> forall z : D, QQ z.
+    auto.
+  Qed.
+
+  Theorem exOr : (exists x : D, PP x) \/ (exists y : D, QQ y) <-> exists z : D, PP z \/ QQ z.
+    firstorder.
+  Qed.
+
+  Print exOr.                     (* a little complicated to prove this by hand *)
+  
+End cheat.

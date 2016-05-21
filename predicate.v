@@ -258,7 +258,7 @@ End drinker.
 Section cheat.
   
   Variable D : Set.
-  Variables PP QQ: D -> Prop.
+  Variables PP QQ : D -> Prop.
   Variable R : Prop.
 
   Lemma allMon : (forall x : D, PP x) -> (forall y : D, PP y -> QQ y) -> forall z : D, QQ z.
@@ -272,3 +272,12 @@ Section cheat.
   Print exOr.                     (* a little complicated to prove this by hand *)
   
 End cheat.
+
+Section puzzle.
+  Variable People : Set.
+  Variable IsWoman : People -> Prop.
+  Variable IsMortal : People -> Prop.
+
+  Theorem mortality : exists b : People, (IsWoman b) /\ (forall p : People, IsWoman p -> IsMortal p) -> IsMortal b.
+  Abort All.
+End puzzle.

@@ -64,3 +64,36 @@ Theorem disjElim : (P \/ Q) -> (P -> R) -> (Q -> R) -> R.
   exact pr.
   exact qr.
 Qed.
+
+(* more natural deduction *)
+
+Variables A B C : Prop.
+
+Theorem ex1 : (A /\ B) /\ C -> A.
+  intro H.
+  destruct H as [ab c].
+  elim ab.
+  intros a b.
+  exact a.
+Qed.
+
+Theorem ex2 : (A /\ B) /\ C -> (B /\ C).
+  intro H.
+  elim H.
+  intros ab c.
+  destruct ab as [a b].
+  split.
+  exact b.
+  exact c.
+Qed.
+
+Theorem ex3 : (A /\ B) /\ C -> A /\ (B /\ C).
+  intro H.
+  destruct H as [ab c].
+  destruct ab as [a b].
+  split.
+  exact a.
+  split.
+  exact b.
+  exact c.
+Qed.

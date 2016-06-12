@@ -71,3 +71,61 @@ end.
                     
 Check sum_n.
 
+Theorem sum_n_p : forall n, 2 * sum_n n + n = n * n.
+  induction n.                  (* 归纳证明 *)
+  reflexivity.
+  assert (SnSn : S n * S n = n * n + 2 * n + 1).
+  ring.
+  rewrite -> SnSn.
+  rewrite <- IHn.
+  simpl.                        (* replace with the sum_n symbolic computation *)
+  ring.
+Qed.
+
+Require Import Bool.
+
+Fixpoint evenb n :=
+  match n with
+    0 => true
+  | 1 => false
+  | S (S p) => evenb p
+end.
+
+Check evenb.
+
+Theorem evenb_p : forall n, evenb n = true -> exists x, n = 2 * x.
+  assert (Main : forall n, (evenb n = true -> exists x, n = 2 * x) /\ (evenb (S n) = true -> exists x, S n = 2 * x)).
+  induction n.
+  split.                        (* split conjunction *)
+  exists O; ring.
+  simpl.
+  intros H.
+  discriminate.
+  split.
+  destruct IHn as [_ IHn'].
+  exact IHn'.
+  simpl.
+  intros H.
+  destruct IHn as [IHn' _].
+  assert (H' : exists x, n = 2 * x).
+  apply IHn'.
+  exact H.
+  destruct H' as [x q].
+  exists (x + 1).
+  rewrite -> q.
+  ring.
+  intros n ev.
+  destruct (Main n) as [H _].
+  apply H.
+  exact ev.
+Qed.
+
+Require Import List.
+
+Print beq_nat.
+
+Fixpoint count n l :=
+  match l with
+    nil => 0
+  | h :: t => let r := count n t in if beq_nat n h then 1 + r else r
+end.

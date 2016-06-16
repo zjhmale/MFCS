@@ -121,11 +121,85 @@ Theorem evenb_p : forall n, evenb n = true -> exists x, n = 2 * x.
 Qed.
 
 Require Import List.
-
 Print beq_nat.
+
+Fixpoint leb (n : nat) : nat -> bool :=
+  match n with
+    | O => fun _ : nat => true
+    | S n' => fun m : nat => match m with
+                         | O => false
+                         | S m' => leb n' m'
+                       end
+  end.
+
+Eval compute in leb 3 3.
+Eval compute in leb 3 6.
+Eval compute in leb 6 3.
+
+Fixpoint insert n l :=
+  match l with
+    nil => n :: nil
+  | h :: t => if leb n h then n :: l else h :: insert n t
+end.
 
 Fixpoint count n l :=
   match l with
     nil => 0
   | h :: t => let r := count n t in if beq_nat n h then 1 + r else r
 end.
+
+(* induction nat O | S _ *)
+(* induction list nil | _ :: _ *)
+
+Theorem insert_incr : forall n l, count n (insert n l) = 1 + count n l.
+  intros n l.
+  induction l.
+  simpl.
+  SearchAbout beq_nat.
+  rewrite <- beq_nat_refl.
+  reflexivity.                  (* or ring *)
+  simpl.
+  case (leb n a).
+  simpl.
+  rewrite <- beq_nat_refl.
+  reflexivity.
+  simpl.
+  case (beq_nat n a).
+  rewrite IHl; reflexivity.
+  rewrite IHl; reflexivity.
+Qed.
+
+(* define new datatypes *)
+
+Inductive bin : Type :=          (* binary tree *)
+  | L : bin                     (* leaf *)
+  | N : bin -> bin -> bin.        (* node *)
+
+Check N L (N L L).              (* nonsense but match the specification *)
+
+Definition example6 (t : bin) : bool :=
+  match t with
+    | N L L => false
+    | _ => true
+  end.
+
+Fixpoint flatten_aux (t1 t2 : bin) : bin :=
+  match t1 with
+    | L => N L t2
+    | N t1' t2' => flatten_aux t1' (flatten_aux t2' t2)
+  end.
+
+Fixpoint flatten (t : bin) : bin :=
+  match t with
+    | L => L
+    | N t1 t2 => flatten_aux t1 (flatten t2)
+  end.
+
+Fixpoint size (t : bin) : nat :=
+  match t with
+   | L => 1
+   | N t1 t2 => 1 + size t1 + size t2
+  end.
+
+Eval compute in flatten_aux (N L L) L.
+Eval compute in size (N (N L L) L).

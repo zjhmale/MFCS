@@ -177,7 +177,7 @@ Inductive bin : Type :=          (* binary tree *)
 
 Check N L (N L L).              (* nonsense but match the specification *)
 
-Definition example6 (t : bin) : bool :=
+Definition is_single_node (t : bin) : bool :=
   match t with
     | N L L => false
     | _ => true
@@ -203,3 +203,113 @@ Fixpoint size (t : bin) : nat :=
 
 Eval compute in flatten_aux (N L L) L.
 Eval compute in size (N (N L L) L).
+Eval compute in size (N L L).
+
+(* prove properties of functions *)
+
+Theorem example_size : forall t, is_single_node t = false -> size t = 3.
+  intro t.
+  destruct t.                   (* the tactic destruct is quite similiar to induction but one is for hypothesis and one is for conclution *)
+  simpl.
+  intro H.
+  discriminate H.               (* just got a contradiction assume true = false *)
+  destruct t1.
+  destruct t2.
+  simpl.
+  reflexivity.                  (* or use auto instead *)
+  simpl.
+  intro H.
+  discriminate H.
+  simpl.
+  intro H; discriminate.
+Qed.
+
+Theorem flatten_aux_size : forall t1 t2, size (flatten_aux t1 t2) = size t1 + size t2 + 1.
+  induction t1.
+  intro t2.
+  simpl.
+  ring.
+  intro t2.
+  simpl.
+  rewrite IHt1_1.
+  rewrite IHt1_2.
+  ring.
+Qed.
+
+Theorem not_subterm_self_1 : forall x y, ~ x = N x y.
+  induction x.
+  intro y.
+  intro H.
+  discriminate.
+  intro y.
+  intro abs.
+  injection abs.
+  intros h2 h1.
+  assert (IHx1' : x1 <> N x1 x2).
+  apply IHx1.
+  case IHx1'.
+  exact h1.
+Qed.
+
+Print nat.
+
+Fixpoint nat_fact (n : nat) : nat :=
+  match n with
+    | O => 1
+    | S p => S p * nat_fact p
+  end.
+
+Fixpoint fib (n : nat) : nat :=
+  match n with
+    | O => 0
+    | S q => match q with
+              | O => 1
+              | S p => fib p + fib q
+            end
+  end.
+
+Inductive even : nat -> Prop :=       (* even x is a proposition *)
+  | evenO : even O
+  | evenS : forall x : nat , even x -> even (S (S x)).
+
+(*
+judgement and inference rule
+
+             n even
+ ——————    ————————————
+ 0 even    S(S(n)) even
+
+       ——————
+       0 even
+    ————————————
+    S(S(0)) even
+ ——————————————————
+ S(S(S(S(0)))) even
+*)
+
+Theorem even_mult : forall x, even x -> exists y, x = 2 * y.
+  intros x H.
+  elim H.                       (* elim and induction are almose the same here *)
+  exists 0.
+  reflexivity.
+  intros xO HevenO IHx.
+  destruct IHx as [y Heq].
+  rewrite Heq.
+  exists (S y).
+  ring.
+Qed.
+
+Theorem not_even_1 : ~even 1.
+  intros even1.
+  inversion even1.
+Qed.
+
+Theorem even_inv : forall x, even (S (S x)) -> even x. (* inversion of evenS *)
+  intros x H.
+  inversion H.
+  exact H1.
+Qed.
+
+(*
+Inductive properties can be used to express very complex notions. For instance, the semantics of a programming language can be defined as an inductive definition, using dozens of constructors, each one describing a an elementary step of computation.
+*)

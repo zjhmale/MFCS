@@ -42,3 +42,25 @@ Proof.
   reflexivity.
   reflexivity.
 Qed.
+
+Theorem app_assoc : forall l1 l2 l3 : natlist, (l1 ++ l2) ++ l3 = l1 ++ (l2 ++ l3).
+Proof.
+  intros l1 l2 l3.
+  induction l1.
+  reflexivity.
+  simpl.
+  rewrite -> IHl1.              (* rewrite left use right *)
+  reflexivity.
+Qed.
+
+Theorem app_length : forall l1 l2 : natlist, length (l1 ++ l2) = length l1 + length l2.
+
+Proof.
+  intros l1 l2.
+  induction l1.
+  reflexivity.
+  simpl.
+  rewrite -> IHl1.
+  reflexivity.
+Qed.
+

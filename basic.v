@@ -148,3 +148,21 @@ Proof.
   subst.                        (* optional step *)
   apply E'.                     (* or exact E' *)
 Qed.
+
+Theorem and_commut : forall P Q : Prop, P /\ Q -> Q /\ P.
+  intros.
+  inversion H.
+  split.
+  apply H1.
+  apply H0.
+Qed.
+
+Theorem double_neg : forall P : Prop, P -> ~~P.
+Proof.
+  intros.
+  unfold not.
+  intros.
+  apply H0.
+  exact H.
+  Show Proof.
+Qed.

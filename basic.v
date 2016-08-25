@@ -166,3 +166,79 @@ Proof.
   exact H.
   Show Proof.
 Qed.
+
+Theorem plus_O_n : forall n : nat, 0 + n = n.
+Proof.
+  intro n.
+  reflexivity.
+Qed.
+
+Theorem plus_1_n : forall n : nat, 1 + n = S n.
+Proof.
+  intro n.
+  reflexivity.
+Qed.
+
+Theorem mult_O_n : forall n : nat, 0 * n = 0.
+Proof.
+  intro n.
+  reflexivity.
+Qed.
+
+Theorem plus_id_example : forall n m : nat, n = m -> n + n = n + m.
+Proof.
+  intros n m.
+  intro H.
+  rewrite -> H.                 (* rewrite left use right *)
+  reflexivity.
+Qed.
+
+Fixpoint beq_nat (n m : nat) : bool :=
+  match n with
+    | O => match m with
+          | O => true
+          | S m' => false
+          end
+    |S n' => match m with
+            | O => false
+            | S m' => beq_nat n' m'
+            end
+  end.
+
+Theorem plus_1_neq_0 : forall n : nat, beq_nat (n + 1) 0 = false.
+Proof.
+  intro n.
+  destruct n as [| n'].
+  simpl.
+  reflexivity.
+  simpl.                        (* the simpl tactic can be ommited *)
+  reflexivity.
+Qed.
+
+
+Definition andb (b1:bool) (b2:bool) : bool :=
+  match b1 with
+    | true => b2
+    | false => false
+  end.
+
+Theorem andb_true_elim : forall b c : bool, andb b c = true -> b = true.
+
+Proof.
+  intros b c H.
+  destruct b.
+  reflexivity.
+  rewrite <- H.
+  simpl.
+  reflexivity.
+Qed.
+
+Theorem plus_0_r : forall n : nat, n + 0 = n.
+Proof.
+  intro n.
+  induction n as [| n'].
+  reflexivity.
+  simpl.
+  rewrite -> IHn'.
+  reflexivity.
+Qed.

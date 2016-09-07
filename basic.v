@@ -242,3 +242,14 @@ Proof.
   rewrite -> IHn'.
   reflexivity.
 Qed.
+
+(* Proving a tautology *)
+
+Variables A B : Prop.
+Theorem tau : ~A -> (A \/ B) -> B.
+Proof.
+  intros.
+  destruct H0.
+  contradiction.
+  apply H0.
+Qed.

@@ -137,6 +137,8 @@ Qed.
 
 (* Exercise 4.2 *)
 
+(** the best refernce is the source code https://github.com/math-comp/math-comp/blob/master/mathcomp/ssreflect/ssrnat.v *)
+
 Definition maxn m n := if m < n then n else m.
 
 Lemma max_l m n: n <= m -> maxn m n = m.

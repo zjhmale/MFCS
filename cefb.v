@@ -2,6 +2,7 @@ Require Import List.
 Import ListNotations.
 
 Require Import Nat.
+Require Import Bool.
 
 Open Scope list_scope.
 
@@ -162,4 +163,19 @@ Proof.
   + intros. auto.
   + intros. destruct m; auto.
   + intros. destruct m; auto.
+Qed.
+
+(* https://coq.inria.fr/refman/Reference-Manual009.html *)
+(* http://poleiro.info/posts/2013-06-27-structuring-proofs-with-bullets.html *)
+
+Theorem andb_comm : forall (b1 b2 : bool), b1 && b2 = b2 && b1.
+Proof.
+  intros.
+  destruct b1.
+  + destruct b2.
+    - simpl. reflexivity.
+    - simpl. reflexivity.
+  + destruct b2.
+    - simpl. reflexivity.
+    - simpl. reflexivity.
 Qed.
